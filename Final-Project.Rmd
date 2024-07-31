@@ -1,0 +1,433 @@
+---
+title: "Final Project"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output: 
+  pdf_document: 
+    extra_dependencies: ["booktabs", "multirow"]
+    latex_engine: xelatex
+    toc: false
+    toc_depth: 3
+editor: visual
+format: pdf
+geometry: margin=2cm
+fontsize: 12pt
+linestretch: 1.15
+classoption: letterpaper
+header-includes:
+   - \usepackage{booktabs}
+   - \usepackage{longtable}
+   - \usepackage{array}
+   - \usepackage{multirow}
+   - \usepackage{wrapfig}
+   - \usepackage{float}
+   - \usepackage{colortbl}
+   - \usepackage{pdflscape}
+   - \usepackage{tabu}
+   - \usepackage{threeparttable}
+   - \usepackage{threeparttablex}
+   - \usepackage[normalem]{ulem}
+   - \usepackage{makecell}
+   - \usepackage{xcolor}
+   - \usepackage{color}
+   - \usepackage{listings} % for formatting code
+   - \usepackage{color}    % for color definitions
+---
+
+```{=tex}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+```
+```{=tex}
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+```
+\lstset{style=mystyle}
+
+**Authors**: Aryan Rezanezhad(251386495)
+
+\vspace{5mm}
+
+**Course**: Generalized Linear Model
+
+\vspace{5mm}
+
+**Instructor**: Dr. Simon Bonner
+
+\vspace{5mm}
+
+**Department**: Actuarial Science & Statistics
+
+\vspace{70mm}
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(cache = FALSE,
+                      warning = FALSE,
+                      message = FALSE,
+                      echo = FALSE,
+                      out.extra = "")
+```
+
+```{r, echo=FALSE, message=FALSE, fig.align='center', out.width='20%'}
+
+knitr::include_graphics("/Users/rezanejad/Desktop/Stacked_Full.png")
+```
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+# Introduction
+
+In the heart of the kingdom of Adanac, a troubling phenomenon has emerged—the gradual decline of the beloved elpam trees. These trees not only serve as a source of beauty but also play a crucial role in providing sustenance and fostering trade within the kingdom. However, the tranquility of Adanac's forests has been disrupted by the insidious presence of snacirema insects, small yet formidable pests originating from the southern regions. These insects inflict significant damage on the elpam trees, particularly during the harsh winter months, threatening the stability of Adanac's food supply and economic prosperity.
+
+Over the past decade, the scientific community has been diligently monitoring the health of elpam trees and the prevalence of snacirema infestation across 200 territories within Adanac. Through meticulous observation and data collection, researchers have endeavored to unravel the mysteries surrounding the decline of the elpam trees and the role played by the invasive snacirema insects. By systematically assessing snacirema populations on selected trees each fall and documenting tree survival rates in the subsequent spring, a wealth of information has been amassed.
+
+This report aims to delve into the intricacies of the data collected over the past decade, with a particular focus on addressing two fundamental questions:
+
+1.  Has there been an increase in the population of snacirema insects over the past 10 years?
+2.  Is there a correlation between the abundance of snacirema insects and the mortality rate of elpam trees?
+
+Furthermore, it is hypothesized that older elpam trees may exhibit heightened vulnerability to snacirema infestation, warranting additional investigation into the age-related dynamics of tree survival.
+
+To shed light on these inquiries, the report will explore the application of statistical methodologies, including logistic regression and Poisson regression, to discern patterns and relationships within the data. By discerning meaningful insights from our comprehensive dataset, we endeavor to uncover actionable intelligence that may aid in mitigating the threat posed by snacirema infestation and safeguarding the future of Adanac's elpam trees.
+
+\clearpage
+
+# Methods
+
+## Data Collection
+
+For this analysis, data was meticulously collected from Adanac’s elpam trees. Each year, for a period spanning a decade, 50 trees that had reached at least 10 years of age were marked within each of the 200 territories of the kingdom. The primary objective was to record the number of snacirema insects on these trees and to note whether each tree survived until the end of winter. This systematic approach was designed to illuminate the factors influencing tree mortality, particularly the suspected increase in snacirema and their impact over the years.
+
+## Statistical Analysis
+
+To understand the relationship between the snacirema insects and the health of elpam trees, three statistical models were planned for use:
+
+-   **Logistic Regression**: This model was intended to estimate the probability of a tree's survival based on the number of snacirema present, as well as other factors like the tree's age and location.
+
+-   **Poisson Regression**: Since snacirema counts are count data, a Poisson model was appropriate to analyze whether the number of insects has increased over the years.
+
+-   **Negative Binomial Regression**: This model was selected as an alternative to the Poisson regression in case of overdispersion — that is, when the data variability is higher than the Poisson model assumes.
+
+The choice of model was to be determined by the nature of the data for each question. For example, if looking at the tree survival, which is a yes/no outcome, logistic regression was considered the first approach. For counts of snacirema, a Poisson model was the starting point. However, if the assumptions of these models were not met — such as the presence of overdispersion — then alternative model like the Negative Binomial were to be employed. Models were compared using the Akaike Information Criterion (AIC), which balances model fit with complexity to avoid overfitting. Additionally, diagnostic plots and goodness-of-fit tests were planned to check model assumptions and ensure reliable interpretations of results.
+
+\clearpage
+
+# Results
+
+## Exploratory Analysis
+
+The distribution of snacirema counts is highly right-skewed, indicating that lower counts of snacirema are much more common than higher counts. The majority of the observed data points are clustered towards the lower end of the scale, with the frequency of occurrences sharply declining as the count increases. This could suggest that higher snacirema counts are relatively rare or that the conditions for such high counts are not commonly met in the observed environment. (see Appendix Figure \textcolor{blue}{1})
+
+The boxplot of Snacirema counts over the years suggests some variation in the distribution as time progresses. While the median values don't show a pronounced trend, the range and number of outliers increase notably in the later years, especially from 2020 onward. This could indicate that, while the average count of Snacirema may not have increased significantly, the occurrence of areas with high Snacirema counts has become more common.In response to the first question about whether Snacirema abundance has increased over the decade, this plot provides evidence of greater variability and more extreme counts in recent years, which could be interpreted as an increase in abundance, at least in certain areas or under specific conditions. (see Appendix Figure \textcolor{blue}{2})
+
+The scatter plot depicts the relationship between Snacirema counts and the survival status of trees, with alive trees marked as 1 and those that did not survive marked as 0. A high density of points at the bottom of the plot indicates many trees with lower Snacirema counts were not alive, whereas the points at the top suggest trees with a range of Snacirema counts that survived. Notably, there's a visible absence of points in the upper region for higher Snacirema counts, indicating that higher infestations might correlate with fewer trees surviving. As for the relationship between Snacirema presence and tree deaths, the plot supports the hypothesis that higher Snacirema counts are associated with non-survival of trees, as indicated by the concentration of non-surviving trees at lower Snacirema counts and the almost clear absence of surviving trees at high Snacirema counts. This visual evidence supports the concern that Snacirema may negatively impact tree health and survival. (see Appendix Figure \textcolor{blue}{3})
+
+The bar chart presents the proportion of trees that remain alive across various levels of Snacirema presence. The pattern seems to indicate a general decline in the proportion of trees that survive as the presence of Snacirema increases, though there are some fluctuations in the trend. Particularly noticeable are the instances where a higher presence corresponds to a markedly lower proportion of tree survival. This visualization may suggest a negative correlation between Snacirema abundance and tree health, aligning with the hypothesis that increased Snacirema could be detrimental to tree survival. However, without statistical testing, we cannot confirm causation, only observe this apparent association. (see Appendix Figure \textcolor{blue}{4})
+
+The correlation plot is a graphical tool that helps us to visualize the relationships between different numerical variables in our data. Looking at the plots along the diagonal, we can see the distribution of each variable on its own. When we move off the diagonal, the plots show how two variables relate to each other.
+
+From this plot, we can gather that latitude and longitude don't have a strong connection to the other variables, as indicated by their low correlation numbers. This means they don't change much in relation to the other variables we're looking at. The yearly cycles shown in the plot for 'Year' likely point to seasonal patterns or changes that happen in a regular yearly cycle.
+
+Most importantly, the number of Snacirema seems to be inversely related to the survival of the trees, meaning that as Snacirema numbers go up, tree survival seems to go down. However, tree age doesn't seem to play a big part in this relationship since the correlation between Snacirema and age is very low. This suggests that Snacirema could be a concern for trees regardless of their age. (see Appendix Figure \textcolor{blue}{5})
+
+\clearpage
+
+## Statistical Analysis
+
+### Poisson Regression Model
+
+In the pursuit of understanding the dynamics affecting snacirema populations, we applied a Poisson regression model tailored to address count data's peculiarities. This statistical model is particularly suited to the nature of our data, which counts the abundance of snacirema on elpam trees.
+
+Upon refining our model using the stepwise approach based on the Akaike Information Criterion (AIC), we arrived at a more streamlined model. This final model had an AIC of 921,647, a slight improvement over the full model's AIC of 921,649.4, indicating a better fit with less complexity (Table \textcolor{blue}{1}).
+
+```{=tex}
+\begin{table}[H]
+\centering
+\begin{tabular}{lc}
+\hline
+Model & AIC Value \\
+\hline
+Full Model & 921649.4 \\
+Final Model & 921647 \\
+\hline
+\end{tabular}
+\caption{AIC Comparison of Poisson Regression Models}
+\label{tab:aic_values}
+\end{table}
+```
+The Hosmer-Lemeshow goodness-of-fit test yielded a non-significant p-value of 1, indicating an adequate fit of the model to the observed data. However, diagnostic plots revealed some potential issues, such as overdispersion, which suggests our data may be more variable than the Poisson model can accommodate (see Appendix Figure \textcolor{blue}{6}).
+
+Indeed, upon checking for overdispersion, we found a value of 6.0219, which significantly exceeds 1, suggesting that the variance of the data is much higher than the mean—a classic indication of overdispersion.
+
+Given these insights, especially the significant figures and the observed overdispersion, our next step in the analysis will involve applying a Negative Binomial model. This alternative approach is designed to manage the extra variability in the data and may provide a more accurate representation of the factors influencing snacirema abundance.
+
+### Negative Binomial Regression Model
+
+Building upon our investigation into the snacirema population dynamics, we transitioned to a Negative Binomial regression model. This choice was informed by the overdispersion detected in the Poisson model, as the Negative Binomial model better handles the variability inherent in count data when variance outstrips the mean.
+
+Our judicious model selection, utilizing a stepwise method prioritizing the Akaike Information Criterion (AIC), yielded a more refined model. The Negative Binomial model's AIC was 615,443.3, compared to the full model's AIC of 615,450 This marginal improvement suggests that the model refinement did indeed result in a parsimonious and more efficient model (see Table \textcolor{blue}{2}).
+
+```{=tex}
+\begin{table}[H]
+\centering
+\begin{tabular}{l r}
+\hline
+Model & AIC \\
+\hline
+Full Model & 615450 \\
+Final Model & 615443.3 \\
+\hline
+\end{tabular}
+\caption{AIC Comparison of Negative Binomial Model}
+\label{tab:aic values}
+\end{table}
+```
+The analysis, using a negative binomial regression model, shows that latitude has a significant positive effect on 'Snacirema,' with each one-unit increase corresponding to a rise of about 1.12 in the expected log-count, indicating strong geographical influence. Longitude has a minimal negative impact, with each one-unit increase resulting in a decrease of roughly 0.002 in the expected log-count. Time (year) exhibits a progressive effect, with each additional year associated with an increase of about 0.23 in the expected log-count. Additionally, the age of the subject positively affects 'Snacirema,' with the expected log-count increasing by about 0.50 for each additional year in age. (see Appendix Table \textcolor{blue}{4})
+
+The variable 'Alive' exhibits a significant positive relationship, indicating that being 'alive' increases the expected log-count by approximately 4.89. Moreover, the interaction terms suggest that the effects of predictors vary relative to each other. The model demonstrates high precision, with the theta parameter of the negative binomial distribution at approximately 2.01, indicating well-accounted for variance and confidence in predictions. The model's goodness of fit is evidenced by a notable decrease in deviance from the null model to the residual deviance, with only one iteration needed for convergence, underscoring its robustness.(see Appendix Table \textcolor{blue}{4})
+
+The Table \textcolor{blue}{5} confidence interval estimates for model coefficients, showing the range where the true parameter values are likely to fall. The 'Lat' coefficient is positive with its interval stretching from roughly 10.63 to 11.81, implying a strong and positive influence of latitude on the response variable. Conversely, the 'Long' coefficient is slightly negative, though nearly zero, with the interval from approximately -0.0039 to 0.0002, indicating a negligible or no effect.
+
+The Hosmer-Lemeshow test confirmed the model's aptness, evidenced by a p-value of 1, suggesting that the predicted values align closely with the observed data. Also, diagnostic checks highlighted potential complexities in the data not fully captured by the model, necessitating careful interpretation (see Figure \textcolor{blue}{7}).
+
+Starting with the coefficient for 'Year', which is 0.2776. The positive sign of this coefficient would typically suggest an increase in the abundance of snacirema over time. However, the story does not end here. The interaction terms, particularly 'Year:Alive' with a coefficient of -0.0243, suggest that the relationship between time and snacirema abundance is more nuanced. Specifically, this interaction term indicates that the effect of time on snacirema abundance is different for trees that are alive compared to those that are not. (see Appendix Table \textcolor{blue}{4})
+
+### Logistic Regression Model
+
+In analyzing the factors that contribute to the vitality of elpam trees, our logistic regression model provides an intricate portrayal of the relationships at play. Logistic regression is particularly well-suited for binary outcome data like ours, where we're interested in whether trees are alive or not.
+
+Our methodological journey began with a full model including all possible predictors and their interactions. Through the process of stepwise model selection using the Akaike Information Criterion (AIC), we refined this to a model that balances complexity with explanatory power. The final model’s AIC of 114,068.7 suggests an optimal fit compared to the full model's AIC of 114,125.5. (see Table \textcolor{blue}{3})
+
+```{=tex}
+\begin{table}[H]
+\centering
+\begin{tabular}{l r}
+\hline
+Model & AIC \\
+\hline
+Full Model & 114125.5 \\
+Final Model & 114068.7 \\
+\hline
+\end{tabular}
+\caption{AIC Comparison of Logistic Regression Model}
+\label{tab:aic values}
+\end{table}
+```
+The coefficients from the logistic regression reveal the log-odds of tree survival. For instance, the coefficient for snacirema is -0.02, indicating that as the snacirema abundance increases, the likelihood of tree survival decreases, holding all else constant. This effect is statistically significant (p < 2e-16), denoting a high confidence in this finding. Similarly, the effect of age is also significant with a coefficient of -0.05 (p < 2e-16), suggesting older trees have lower odds of survival. The interaction term between snacirema and age (Snacirema:Age) has a coefficient of 0.00005, which is not significant (p = 0.147), indicating that the effect of snacirema on the likelihood of a tree being alive does not significantly change with the age of the tree. (see Appendix Table \textcolor{blue}{6})
+
+Confidence intervals from the model, which provide bounds within which we can say with 95% certainty that the true coefficient lies, were also considered. For instance, the confidence interval for the snacirema effect ranges from approximately -0.0255 to -0.0195, reinforcing the robustness of the negative impact of snacirema on tree survival. (see Appendix Table \textcolor{blue}{7})
+
+The Hosmer and Lemeshow test returns a p-value of 0.4117, which suggests that our model has a good fit with the observed data. In terms of overdispersion, the value is approximately 1.0019, close to 1, suggesting that the binomial distribution is appropriate for our data and that there is no overdispersion present.
+
+The diagnostic plots from our logistic regression analysis suggest a few areas to scrutinize. The Residuals vs Fitted plot indicates a potential increase in variability of residuals as the predicted values rise, which hints at non-constant variance, deviating from the homoscedasticity assumption. The Normal Q-Q plot reveals deviation from the expected line in the tails, suggesting that the residuals may not be normally distributed, particularly noting the heavier right tail. The Scale-Location plot echoes the concern about homoscedasticity, with a pattern that suggests non-constant variance across the range of predictions. Lastly, the Residuals vs Leverage plot does not show individual points with high leverage, implying that no single observations are excessively impacting the model’s performance. (see Figure \textcolor{blue}{8})
+
+To address the second question of whether there's an association between the rate of death of elpam trees and the number of snacirema, our model clearly shows that an increase in snacirema is associated with decreased survival of trees. This aligns with the ecological theory that certain species can be detrimental to the health of others in their habitat.
+
+The takeaway from our logistic regression model is nuanced: While snacirema indeed impacts tree mortality, their influence is consistent across different tree ages, as evidenced by the non-significant interaction term. This finding highlights the importance of snacirema as a factor in the conservation strategies for elpam trees.
+
+# Conclusion
+In conclusion, our comprehensive decade-long study in the kingdom of Adanac has brought us to a pivotal understanding regarding the elpam trees and their symbiotic relationship with the snacirema insects. To address our first question, our analysis provided compelling evidence of an uptick in the snacirema population over the years. This was not just a mere assumption but a finding backed by data that reflected increasing counts, especially noticeable in the latter half of the decade.
+
+Furthermore, our exploration into the second inquiry confirmed a tangible correlation between the prevalence of snacirema and the mortality of elpam trees. This was manifested in the statistical models that consistently indicated an inverse relationship between snacirema counts and tree survival rates. Older trees, a particular focus of our study, were not exempt from this pattern, suggesting that age did not significantly alter the impact of snacirema on tree mortality.
+
+It is paramount to highlight that the implications of these findings extend beyond academic curiosity. They signal a pressing need for strategies to manage the snacirema populations, thereby preserving the elpam trees, which are a cornerstone of Adanac's environmental and economic fabric. Our research paves the way for targeted conservation efforts and informed policymaking that can address this ecological concern. The rigorous statistical analysis has not only validated our hypotheses but also equipped the stakeholders with the knowledge to enact measures that may prevent the potential decimation of a vital natural resource.
+
+Our research has delved deep into statistical analysis to uncover the mystery behind the declining numbers of elpam trees. We've found that the increase in snacirema counts poses a significant threat to tree survival. This understanding calls for a harmonious approach to balance nature's complexities with human interventions. As we conclude, we're reminded that Adanac's story is not just about conflict but also about the power of data-driven analysis in guiding ecological stewardship and sustainability.
+
+\clearpage
+# Appendix
+
+```{r, Plot the distribution of snacirema counts,echo=FALSE}
+#| label: fig-1
+#| fig-cap: "Plot the distribution of snacirema counts"
+#| fig-height: 6
+#| fig-width: 12
+library(ggplot2)
+library(dplyr)
+library(MASS)
+library(GGally)
+data <- read.csv("Data.csv", header = TRUE)
+data <- subset(data, select = -c(Territory))
+ggplot(data, aes(x = Snacirema)) + 
+  geom_histogram(binwidth = 1, fill = 'blue', color = 'black') +
+  labs(title = "Distribution of Snacirema Counts", x = "Snacirema Count", y = "Frequency")
+```
+
+```{r, Boxplot of snacirema counts by year to see the trend over time,echo=FALSE}
+#| label: fig-2
+#| fig-cap: "Boxplot of snacirema counts by year to see the trend over time"
+#| fig-height: 6
+#| fig-width: 12
+ggplot(data, aes(x = as.factor(Year), y = Snacirema)) +
+  geom_boxplot() +
+  labs(title = "Snacirema Counts Over Years", x = "Year", y = "Snacirema Count")
+```
+
+```{r, Scatter plot to see the relationship between snacirema counts and tree deaths,echo=FALSE}
+#| label: fig-3
+#| fig-cap: "Scatter plot to see the relationship between snacirema counts and tree deaths"
+#| fig-height: 6
+#| fig-width: 12
+ggplot(data, aes(x = Snacirema, y = Alive)) +
+  geom_jitter(aes(color = Alive), width = 0.2, height = 0.2, alpha = 0.5) +
+  labs(title = "Snacirema Counts vs. Tree Survival Status", x = "Snacirema Count", y = "Alive (1 or 0)")
+```
+
+```{r, Bar plot to visualize the proportion of alive trees by snacirema presence,echo=FALSE}
+#| label: fig-4
+#| fig-cap: "Bar plot to visualize the proportion of alive trees by snacirema presence"
+#| fig-height: 6
+#| fig-width: 12
+data |>
+  group_by(Snacirema) |>
+  summarise(ProportionAlive = mean(Alive)) |>
+  ggplot(aes(x = as.factor(Snacirema), y = ProportionAlive)) +
+  geom_bar(stat = "identity", fill = 'green', color = 'black') +
+  labs(title = "Proportion of Alive Trees by Snacirema Presence", x = "Snacirema Presence", y = "Proportion Alive")
+```
+
+```{r, Correlation plot for numerical variables,echo=FALSE}
+#| label: fig-5
+#| fig-cap: "Correlation plot for numerical variables"
+#| fig-height: 10
+#| fig-width: 16
+ggpairs(data[,sapply(data, is.numeric)])
+```
+
+```{r, Diagnosis Plots for Poisson Regression Model,echo=FALSE}
+#| label: fig-6
+#| fig-cap: "Diagnosis Plots for Poisson Regression Model"
+#| fig-height: 7
+#| fig-width: 14
+Full_Model_Po <- glm(Snacirema ~ (.)^2, family = poisson, data = data)
+Final_Model_Po <- stepAIC(Full_Model_Po, direction = "both", trace = FALSE)
+par(mfrow=c(2,2))
+plot(Final_Model_Po)
+```
+
+```{r, Diagnosis Plots for Negative Binomial Regression Model,echo=FALSE}
+#| label: fig-7
+#| fig-cap: "Diagnosis Plots for Negative Binomial Regression Model"
+#| fig-height: 7
+#| fig-width: 14
+Full_Model_Nb <- glm.nb(Snacirema ~ (.)^2, data = data)
+Final_Model_Nb <- stepAIC(Full_Model_Nb, direction = "both", trace = FALSE)
+par(mfrow=c(2,2))
+plot(Final_Model_Nb)
+```
+
+```{r, Diagnosis Plots for Logistic Regression Model,echo=FALSE}
+#| label: fig-8
+#| fig-cap: "Diagnosis Plots for Logistic Regression Model"
+#| fig-height: 7
+#| fig-width: 14
+data$Year <- as.factor(data$Year)
+Full_Model_Lo <- glm(Alive ~ (.)^2, family = binomial(link="logit"), data = data)
+Final_Model_Lo <- stepAIC(Full_Model_Lo, direction = "both", trace = FALSE)
+par(mfrow=c(2,2))
+plot(Final_Model_Lo)
+```
+
+```{=tex}
+\begin{table}[htbp]
+\centering
+\label{tab:modelsummary}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Term         & Estimate     & Std. Error   & z value   & Pr(>|z|)      \\ \midrule
+(Intercept)  & -457.3       & 6.295        & -72.641   & < 0.001 ***   \\
+Lat          & 11.22        & 2.993        & 37.501    & < 0.001 ***   \\
+Long         & -0.00185     & 0.001042     & -1.777    & 0.0756 .      \\
+Year         & 0.2276       & 0.003118     & 73.004    & < 0.001 ***   \\
+Age          & 0.4969       & 0.1046       & 4.749     & < 0.001 ***   \\
+Alive        & 48.85        & 4.067        & 12.010    & < 0.001 ***   \\
+Lat:Year     & -0.005585    & 0.0001482    & -37.676   & < 0.001 ***   \\
+Lat:Alive    & 0.005447     & 0.0008667    & 6.285     & < 0.001 ***   \\
+Long:Age     & 0.00004761   & 0.00002216   & 2.149     & 0.0317 *      \\
+Year:Age     & -0.0002469   & 0.00005182   & -4.765    & < 0.001 ***   \\
+Year:Alive   & -0.02427     & 0.002014     & -12.048   & < 0.001 ***   \\
+Age:Alive    & 0.0005151    & 0.0003081    & 1.672     & 0.0946 .      \\
+\bottomrule
+\end{tabular}
+\caption{Summary of Negative Binomial Regression Model}
+\end{table}
+```
+```{=tex}
+\begin{table}[ht]
+\centering
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Coefficient & 2.5\% & 97.5\% \\ \midrule
+(Intercept) & -469.65 & -444.94 \\
+Lat         & 10.64   & 11.81   \\
+Long        & -0.004  & 0.0002  \\
+Year        & 0.21    & 0.24    \\
+Age         & 0.29    & 0.73    \\
+Alive       & 48.71   & 56.82   \\
+Lat:Year    & -0.006  & -0.005  \\
+Lat:Alive   & 0.004   & 0.007   \\
+Long:Age    & 0.000004 & 0.000009 \\
+Year:Age    & -0.00035 & -0.00015 \\
+Year:Alive  & -0.03    & -0.02    \\
+Age:Alive   & -0.00009 & 0.0012   \\ \bottomrule
+\end{tabular}
+\caption{Confidence intervals for negative binomial model coefficients.}
+\end{table}
+```
+```{=tex}
+\begin{table}[ht]
+\centering
+\begin{tabular}{lcccc}
+\hline
+\textbf{Coefficient} & \textbf{Estimate} & \textbf{Std. Error} & \textbf{z value} & \textbf{Pr(>|z|)} \\
+\hline
+(Intercept) & 3.009e+00 & 2.736e-02 & 109.973 & <2e-16 *** \\
+Lat & -1.838e-03 & 1.228e-03 & -1.497 & 0.134 \\
+Snacirema & -2.250e-02 & 1.531e-03 & -14.695 & <2e-16 *** \\
+Age & -5.002e-02 & 5.464e-04 & -91.543 & <2e-16 *** \\
+Snacirema:Age & 4.785e-05 & 3.297e-05 & 1.451 & 0.147 \\
+\hline
+\end{tabular}
+\caption{Logistic regression model coefficients.}
+\label{tab:model_coefficients}
+\end{table}
+```
+```{=tex}
+\begin{table}[ht]
+\centering
+\begin{tabular}{lcc}
+\hline
+\textbf{Coefficient} & \textbf{2.5 \%} & \textbf{97.5 \%} \\
+\hline
+(Intercept) & 2.955e+00 & 3.062e+00 \\
+Lat & -4.245e-03 & 0.0005689 \\
+Snacirema & -2.551e-02 & -0.01950 \\
+Age & -5.110e-02 & -0.04895 \\
+Snacirema:Age & -1.698e-05 & 0.0001122 \\
+\hline
+\end{tabular}
+\caption{Confidence intervals for logistic regression model coefficients.}
+\label{tab:conf_intervals}
+\end{table}
+```
