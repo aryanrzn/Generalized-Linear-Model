@@ -8,7 +8,7 @@ This report aims to delve into the intricacies of the data collected over the pa
 
 - Has there been an increase in the population of snacirema insects over the past 10 years?
 - Is there a correlation between the abundance of snacirema insects and the mortality rate of elpam trees?
-- 
+  
 Furthermore, it is hypothesized that older elpam trees may exhibit heightened vulnerability to snacirema infestation, warranting additional investigation into the age-related dynamics of tree survival.
 
 To shed light on these inquiries, the report will explore the application of statistical methodologies, including logistic regression and Poisson regression, to discern patterns and relationships within the data. By discerning meaningful insights from our comprehensive dataset, we endeavor to uncover actionable intelligence that may aid in mitigating the threat posed by snacirema infestation and safeguarding the future of Adanac’s elpam trees.
